@@ -166,5 +166,10 @@ void MainWindow::on_spinBox_Limit_valueChanged(int arg1)
 
 void MainWindow::on_spinBox_Target_valueChanged(int arg1)
 {
-    ui->label_TargetTmep->setText(QString::number(ADC2Temp(arg1)));
+    ui->label_TargetTemp->setText(QString::number(ADC2Temp(arg1)));
+}
+
+void MainWindow::on_comboBox_activated(const QString &arg1)
+{
+    ui->spinBox_Target->setValue(arg1.toInt());
 }

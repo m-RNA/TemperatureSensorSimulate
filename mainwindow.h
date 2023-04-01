@@ -55,6 +55,8 @@ private slots:
 
     void on_spinBox_Target_valueChanged(int arg1);
 
+    void on_comboBox_activated(const QString &arg1);
+
 private:
     Ui::MainWindow *ui;
     double current = 25;
