@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QDebug>
 #include <time.h>
+#include <QFile>
 #include <QSettings>
 #include <QTextCodec>
 
@@ -39,19 +40,22 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    delete ui;
-    delete pid;
+    saveSettings();
 
     serial_Std->close();
     serial_Dtm->close();
 
-    saveSettings();
+    delete ui;
+    delete pid;
 }
 
 void MainWindow::loadSettings()
 {
+    if (QFile::exists("config.ini") == false)
+        return;
+
     QSettings settings("config.ini", QSettings::IniFormat);
-    settings.setIniCodec(QTextCodec::codecForName("GB18030"));
+    // settings.setIniCodec(QTextCodec::codecForName("GB18030"));
 
     settings.beginGroup("MainWindow");
     ui->label_Temperature->setText(settings.value("Temperature", "25").toString());
@@ -72,7 +76,7 @@ void MainWindow::loadSettings()
 void MainWindow::saveSettings()
 {
     QSettings settings("config.ini", QSettings::IniFormat);
-    settings.setIniCodec(QTextCodec::codecForName("GB18030"));
+    // settings.setIniCodec(QTextCodec::codecForName("GB18030"));
 
     settings.beginGroup("MainWindow");
     settings.setValue("Temperature", ui->label_Temperature->text());
@@ -176,8 +180,8 @@ void MainWindow::simulate()
 
     double noiseTemp = ui->spinBox_WaveTemperature->value() * randomGauss();
     double noiseCurrent = ui->spinBox_WaveADC->value() * randomGauss();
-    qDebug() << "1 " << noiseTemp;
-    qDebug() << "2 " << noiseCurrent;
+    // qDebug() << "1 " << noiseTemp;
+    // qDebug() << "2 " << noiseCurrent;
     // qDebug() << strCurrent.toUtf8().data(); // << '\t' << temperature;
 
     strTemp = QString::number(temperature + noiseTemp) + '\n';

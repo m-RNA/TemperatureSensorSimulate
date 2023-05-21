@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>TSC_SIM.svg</file>
+        <file>TCSIM_Color.svg</file>
+    </qresource>
+</RCC>
