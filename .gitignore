@@ -1,3 +1,4 @@
 build-TSCUC_Sim-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/*
 *.autosave
 build-TSCUC_Sim-Desktop_Qt_5_14_2_MinGW_64_bit-Release/*
+TSCUC_Sim.pro.user
