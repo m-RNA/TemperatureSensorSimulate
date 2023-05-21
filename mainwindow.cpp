@@ -2,6 +2,8 @@
 #include "ui_mainwindow.h"
 #include <QDebug>
 #include <time.h>
+#include <QSettings>
+#include <QTextCodec>
 
 double MainWindow::randomGauss(double stddev = 0.1, double average = 0.0)
 {
@@ -13,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    loadSettings();
 
     current = ui->label_ADC->text().toDouble();
     pid = new PID(ui->doubleSpinBox_P->value(), ui->doubleSpinBox_I->value(), ui->doubleSpinBox_D->value(), ui->spinBox_Limit->value());
@@ -41,6 +44,50 @@ MainWindow::~MainWindow()
 
     serial_Std->close();
     serial_Dtm->close();
+
+    saveSettings();
+}
+
+void MainWindow::loadSettings()
+{
+    QSettings settings("config.ini", QSettings::IniFormat);
+    settings.setIniCodec(QTextCodec::codecForName("GB18030"));
+
+    settings.beginGroup("MainWindow");
+    ui->label_Temperature->setText(settings.value("Temperature", "25").toString());
+    ui->label_ADC->setText(settings.value("ADC", "4879210").toString());
+
+    ui->spinBox_Period->setValue(settings.value("Period", 50).toInt());
+    ui->doubleSpinBox_P->setValue(settings.value("P", 0.08).toDouble());
+    ui->doubleSpinBox_I->setValue(settings.value("I", 0).toDouble());
+    ui->doubleSpinBox_D->setValue(settings.value("D", 0.1).toDouble());
+    ui->spinBox_Limit->setValue(settings.value("Limit", 1000).toInt());
+    ui->comboBox->setCurrentIndex(settings.value("TargetIndex", 2).toInt());
+    ui->spinBox_Target->setValue(settings.value("Target", 4879210).toInt());
+    ui->spinBox_WaveTemperature->setValue(settings.value("WaveTemperature", 0.008).toDouble());
+    ui->spinBox_WaveADC->setValue(settings.value("WaveADC", 200).toDouble());
+    settings.endGroup();
+}
+
+void MainWindow::saveSettings()
+{
+    QSettings settings("config.ini", QSettings::IniFormat);
+    settings.setIniCodec(QTextCodec::codecForName("GB18030"));
+
+    settings.beginGroup("MainWindow");
+    settings.setValue("Temperature", ui->label_Temperature->text());
+    settings.setValue("ADC", ui->label_ADC->text());
+
+    settings.setValue("Period", ui->spinBox_Period->value());
+    settings.setValue("P", ui->doubleSpinBox_P->value());
+    settings.setValue("I", ui->doubleSpinBox_I->value());
+    settings.setValue("D", ui->doubleSpinBox_D->value());
+    settings.setValue("Limit", ui->spinBox_Limit->value());
+    settings.setValue("TargetIndex", ui->comboBox->currentIndex());
+    settings.setValue("Target", ui->spinBox_Target->value());
+    settings.setValue("WaveTemperature", ui->spinBox_WaveTemperature->value());
+    settings.setValue("WaveADC", ui->spinBox_WaveADC->value());
+    settings.endGroup();
 }
 
 QSerialPort *MainWindow::serialInit(QSerialPort *sp, const QString &portName)

@@ -42,6 +42,9 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void loadSettings();
+    void saveSettings();
+
 private slots:
     void on_spinBox_Period_valueChanged(int arg1);
 
