@@ -61,6 +61,9 @@ void MainWindow::loadSettings()
     ui->label_Temperature->setText(settings.value("Temperature", "25").toString());
     ui->label_ADC->setText(settings.value("ADC", "4879210").toString());
 
+    ui->cbAnalyse_Std->setCurrentIndex(settings.value("Analyse_Std", 1).toInt());
+    ui->cbAnalyse_Dtm->setCurrentIndex(settings.value("Analyse_Dtm", 0).toInt());
+
     ui->spinBox_Period->setValue(settings.value("Period", 50).toInt());
     ui->doubleSpinBox_P->setValue(settings.value("P", 0.08).toDouble());
     ui->doubleSpinBox_I->setValue(settings.value("I", 0).toDouble());
@@ -81,6 +84,9 @@ void MainWindow::saveSettings()
     settings.beginGroup("MainWindow");
     settings.setValue("Temperature", ui->label_Temperature->text());
     settings.setValue("ADC", ui->label_ADC->text());
+
+    settings.setValue("Analyse_Std", ui->cbAnalyse_Std->currentIndex());
+    settings.setValue("Analyse_Dtm", ui->cbAnalyse_Dtm->currentIndex());
 
     settings.setValue("Period", ui->spinBox_Period->value());
     settings.setValue("P", ui->doubleSpinBox_P->value());
@@ -183,9 +189,16 @@ void MainWindow::simulate()
     // qDebug() << "1 " << noiseTemp;
     // qDebug() << "2 " << noiseCurrent;
     // qDebug() << strCurrent.toUtf8().data(); // << '\t' << temperature;
+    if (ui->cbAnalyse_Std->currentIndex() == 0)
+        strTemp = QString::number(temperature + noiseTemp) + "\r\n";
+    else
+        strTemp = "$T=" + QString::number(temperature + noiseTemp) + " ;\r\n";
 
-    strTemp = QString::number(temperature + noiseTemp) + '\n';
-    strCurrent = QString::number(current + noiseCurrent, 'f', 0) + '\n';
+    if (ui->cbAnalyse_Dtm->currentIndex() == 0)
+        strCurrent = QString::number(current + noiseCurrent, 'f', 0) + "\r\n";
+    else
+        strCurrent = "$T=" + QString::number(current + noiseCurrent, 'f', 0) + " ;\r\n";
+
     serial_Std->write(strTemp.toUtf8().data());
     serial_Dtm->write(strCurrent.toUtf8().data());
 }
